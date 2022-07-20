@@ -66,10 +66,10 @@ public class FirstActivity extends AppCompatActivity {
         mTabLayout_2 = findViewById(R.id.tl_2);
 
 
-        for (String title : mTitles) {
+       /* for (String title : mTitles) {
             mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + title));
             mFragments2.add(SimpleCardFragment.getInstance("Switch Fragment " + title));
-        }
+        }*/
 
         for (int i = 0; i < mTitles.length; i++) {
             mTabEntities.add(new TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]));
