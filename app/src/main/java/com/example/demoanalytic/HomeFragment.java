@@ -80,14 +80,14 @@ public class HomeFragment extends Fragment {
     private void getData() {
         OkGo.<String>get(url)
                 .params("userId", "minApp125106")
-                .params("rooms", "厨房")
+                .params("rooms", "客厅")
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override
                     public void onSuccess(com.lzy.okgo.model.Response<String> response) {
                         //AllBean mAllBean = JSONObject.parseObject(response.body(), AllBean.class);
                         Log.e("TAG", "onSuccess:" + response.body());
                         Message msg = new Message();
-                        msg.what = 401;
+                        msg.what = 471;
                         msg.obj = response.body();
                         mHandler.sendMessage(msg);
                     }
@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message message) {
-            if (message.what == 401) {
+            if (message.what == 471) {
                 String post = (String) message.obj;
                 Gson gson = new Gson();
                 ClodAirBean mClodAirBean = gson.fromJson(post, ClodAirBean.class);

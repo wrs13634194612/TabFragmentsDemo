@@ -1,5 +1,6 @@
 package com.example.demoanalytic;
 
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,34 +12,29 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 
-public class TimeActivity extends AppCompatActivity {
+public class DelayActivity extends AppCompatActivity {
 
-    private Button btn_save_time,btn_delete_time;
-    private EditText et_end_time, et_start_time, et_end_isRun, et_start_isRun, et_week;
-    private String endTimeString, startTimeString, isStartRunString, isEndRunString, weekString;
-    private String url = "http://tt.mindordz.com:6361/api/time/createAndUpdateRcTiming";
+    private Button btn_delete_delay, btn_save_delay;
+    private EditText et_time_delay, et_delay_isRun;
+    private String timeDelayString, delayIsRunString;
+    private String url = "http://tt.mindordz.com:6361/api/time/createAndUpdateRcDelay";
     private String urlDelete = "http://tt.mindordz.com:6361/api/time/deleteTimeById";
     private String brandId;
     private String modeId;
     private String productId;
     private String equipmentId;
-    private int timeId;
+    private int delayId;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_time);
+        setContentView(R.layout.activity_set_delay);
 
-        btn_save_time = findViewById(R.id.btn_save_time);
-        btn_delete_time = findViewById(R.id.btn_delete_time);
-        et_end_time = findViewById(R.id.et_end_time);
-        et_start_time = findViewById(R.id.et_start_time);
-        et_start_isRun = findViewById(R.id.et_start_isRun);
-        et_end_isRun = findViewById(R.id.et_end_isRun);
-
-        et_week = findViewById(R.id.et_week);
-
+        btn_delete_delay = findViewById(R.id.btn_delete_delay);
+        btn_save_delay = findViewById(R.id.btn_save_delay);
+        et_time_delay = findViewById(R.id.et_time_delay);
+        et_delay_isRun = findViewById(R.id.et_delay_isRun);
         /*
                    intent.putExtra("brandId",mEntityBean.getBrandId());
                 intent.putExtra("modeId",mEntityBean.getModeId());
@@ -50,52 +46,58 @@ public class TimeActivity extends AppCompatActivity {
         modeId = getIntent().getStringExtra("modeId");
         productId = getIntent().getStringExtra("productId");
         equipmentId = getIntent().getStringExtra("equipmentId");
-        timeId = getIntent().getIntExtra("timeId",0);
-
+        delayId = getIntent().getIntExtra("delayId", 0);
 
         System.out.println(brandId + modeId + productId + equipmentId);
 
         //1119 6a56dfd96d1657882000851 zcz004 zcz004100411
 
 
-        btn_save_time.setOnClickListener(new View.OnClickListener() {
+        btn_save_delay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /*网络请求  保存 数据
                 定时和倒计时  缓存的数据  无法 刷新
                 //private String endTimeString, startTimeString, isRunString, weekString;
+                    private EditText et_time_delay, et_delay_isRun;
+                     private String timeDelayString, delayIsRunString;
                 * * */
-                endTimeString = et_end_time.getText().toString();
-                startTimeString = et_start_time.getText().toString();
-                isStartRunString = et_start_isRun.getText().toString();
-                isEndRunString = et_end_isRun.getText().toString();
-                weekString = et_week.getText().toString();
-                getData(endTimeString, startTimeString, Integer.parseInt(isStartRunString), Integer.parseInt(isEndRunString), weekString);
+                timeDelayString = et_time_delay.getText().toString();
+                delayIsRunString = et_delay_isRun.getText().toString();
+                getDelay(timeDelayString, Integer.parseInt(delayIsRunString));
             }
         });
 
-        btn_delete_time.setOnClickListener(new View.OnClickListener() {
+        btn_delete_delay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getDelete();
+
             }
         });
     }
 
-    private void getData(String endTimeString, String startTimeString, int isStartRunInteger, int isEndRunInteger, String weekString) {
-        ScheduleBean mScheduleBean = new ScheduleBean();
-        mScheduleBean.setBrandId(brandId);
-        mScheduleBean.setModeId(modeId);
-        mScheduleBean.setProductId(productId);
-        mScheduleBean.setEquipmentId(equipmentId);
-        mScheduleBean.setStartTime(startTimeString);
-        mScheduleBean.setEndTime(endTimeString);
-        mScheduleBean.setOpenIf(isStartRunInteger);
-        mScheduleBean.setCloseIf(isEndRunInteger);
-        mScheduleBean.setWeek(weekString);
-        mScheduleBean.setId(0);  //0新增 1 是修改
+
+    private void getDelay(String timeDelayString, int delayIsRunInteger) {
+        /**
+         {
+         "brandId": "1",
+         "modeId": "0f30aaaa5d1655867968558",
+         "productId": "zcz004",
+         "equipmentId": "zcz00410tt0",
+         "executeTime": "13:00",
+         "switchStatus": 1
+         }
+         */
+        CountDownBean mCountDownBean = new CountDownBean();
+        mCountDownBean.setBrandId(brandId);
+        mCountDownBean.setModeId(modeId);
+        mCountDownBean.setProductId(productId);
+        mCountDownBean.setEquipmentId(equipmentId);
+        mCountDownBean.setExecuteTime(timeDelayString);
+        mCountDownBean.setSwitchStatus(delayIsRunInteger);
         Gson gson = new Gson();
-        String jsonString = gson.toJson(mScheduleBean);
+        String jsonString = gson.toJson(mCountDownBean);
         OkGo.<String>post(url)
                 .upJson(jsonString)
                 .execute(new com.lzy.okgo.callback.StringCallback() {
@@ -114,8 +116,8 @@ public class TimeActivity extends AppCompatActivity {
 
     private void getDelete() {
         OkGo.<String>delete(urlDelete)
-                .params("id", timeId)
-                .params("type", "timing")
+                .params("id", delayId)
+                .params("type", "delay")
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override
                     public void onSuccess(com.lzy.okgo.model.Response<String> response) {
@@ -131,31 +133,24 @@ public class TimeActivity extends AppCompatActivity {
     }
 
 }
-/* add
+
+/*
 {
     "code":200,
     "data":{
-        "id":22,
+        "id":87,
         "brandId":"1119",
         "modeId":"6a56dfd96d1657882000851",
         "productId":"zcz004",
         "equipmentId":"zcz004100411",
-        "week":"0",
-        "startTime":"12:09",
-        "endTime":"13:09",
-        "openIf":2,
-        "closeIf":2,
-        "createTime":"1658375260653"
+        "executeTime":"00:01",
+        "executeTimePoint":"12:20:20",
+        "switchStatus":2,
+        "createTime":"1658377177914"
     },
     "message":"操作成功"
 }
 
-* */
+{"code":200,"message":"数据操作成功"}
 
-/*delete
-{
-    "code":200,
-    "message":"操作成功"
-}
-{"code":3012,"message":"数据操作失败"}
 * */

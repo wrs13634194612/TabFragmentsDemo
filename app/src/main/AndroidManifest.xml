@@ -20,6 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".TimeActivity"/>
+        <activity android:name=".DelayActivity"/>
+        <activity android:name=".BrandConnectActivity"/>
+        <activity android:name=".UpdateModeActivity"/>
 
     </application>
 

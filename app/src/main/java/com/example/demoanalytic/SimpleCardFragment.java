@@ -35,12 +35,13 @@ public class SimpleCardFragment extends Fragment {
     private Button btn_countdown_status, btn_countdown_time;
     private Button btn_time_end_status, btn_time_end,
             btn_time_start_status, btn_time_start, btn_time_week;
-    private Button btn_set_time;
+    private Button btn_set_time,btn_set_delay;
     private String url = "http://tt.mindordz.com:6361/api/hac/rcControl";
 
     private List<ClodAirBean.DataBean.ModesBean.ListBean> keyboardList = new ArrayList<>();
     private ClodAirBean.DataBean.ModesBean.ListBean mListBean;
-
+    private int timeId=0;
+    private int delayId=0;
     private ClodAirBean.DataBean.ModesBean.DelaysBean mDelaysBean;
     private ClodAirBean.DataBean.ModesBean.EntityBean mEntityBean;
     private ClodAirBean.DataBean.ModesBean.TimingsBean mTimingsBean;
@@ -99,6 +100,7 @@ public class SimpleCardFragment extends Fragment {
         btn_time_start = view.findViewById(R.id.btn_time_start);
         btn_time_week = view.findViewById(R.id.btn_time_week);
         btn_set_time = view.findViewById(R.id.btn_set_time);
+        btn_set_delay = view.findViewById(R.id.btn_set_delay);
         return view;
     }
 
@@ -185,6 +187,10 @@ public class SimpleCardFragment extends Fragment {
                                     android:id="@+id/btn_time_start_status"
                                     android:id="@+id/btn_time_start"
 
+        * */
+
+        /*
+        * 接下来  去看原来代码  的遥控 新增的接口  看看是调用的哪个接口
         * */
 
         if (mDelaysBean != null) {
@@ -616,14 +622,49 @@ public class SimpleCardFragment extends Fragment {
                     mScheduleBean.setProductId("zcz004");
                     mScheduleBean.setEquipmentId("zcz004100411");
                 * * */
+                if (mTimingsBean!=null){
+                    timeId=mTimingsBean.getId();
+                }
                 Intent intent = new Intent(mContext,TimeActivity.class);
                 intent.putExtra("brandId",mEntityBean.getBrandId());
                 intent.putExtra("modeId",mEntityBean.getModeId());
                 intent.putExtra("productId",mEntityBean.getProductId());
                 intent.putExtra("equipmentId",mEntityBean.getEquipmentId());
+                intent.putExtra("timeId",timeId);
                 startActivity(intent);
             }
         });
+
+        btn_set_delay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*
+                * 定时  需要 把entity传递过来
+                                 val intent = Intent(context, PlugUpdateNewActivity::class.java)
+                        intent.putExtra("equipmentId",it.equipmentId)
+                        intent.putExtra("productId",it.productId)
+                        context?.startActivity(intent)
+                        *
+                        *
+                    mScheduleBean.setBrandId("1");
+                    mScheduleBean.setModeId("6a56dfd96d1657882000851");
+                    mScheduleBean.setProductId("zcz004");
+                    mScheduleBean.setEquipmentId("zcz004100411");
+                * * */
+                if (mDelaysBean!=null){
+                    delayId=mDelaysBean.getId();
+                }
+                Intent intent = new Intent(mContext,DelayActivity.class);
+                intent.putExtra("brandId",mEntityBean.getBrandId());
+                intent.putExtra("modeId",mEntityBean.getModeId());
+                intent.putExtra("productId",mEntityBean.getProductId());
+                intent.putExtra("equipmentId",mEntityBean.getEquipmentId());
+                intent.putExtra("delayId",delayId);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
 
