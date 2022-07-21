@@ -435,11 +435,11 @@ public class ClodAirBean {
                     this.mac = mac;
                 }
 
-                public String getBrand_id() {
+                public String getBrandId() {
                     return brand_id;
                 }
 
-                public void setBrand_id(String brand_id) {
+                public void setBrandId(String brand_id) {
                     this.brand_id = brand_id;
                 }
 

@@ -2,6 +2,8 @@ package com.example.demoanalytic;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,10 +20,12 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
+import com.lzy.okgo.OkGo;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +48,7 @@ public class HomeFragment extends Fragment {
     private HashMap<String, RcDeviceBean> map2;
     private List<RcDeviceBean> allGroups;
     private List<ClodAirBean.DataBean.ModesBean> devices;
+    private String url = "http://tt.mindordz.com:6361/api/hac/findModeByUserId";
 
 
     @Override
@@ -57,12 +62,74 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment1, null);
         mViewPager = view.findViewById(R.id.vp_2);
         mTabLayout_2 = view.findViewById(R.id.tl_2);
-        loadJsonFromAssests();
-        MyPagerAdapter mMyPagerAdapter = new MyPagerAdapter(getChildFragmentManager());
-        mViewPager.setAdapter(mMyPagerAdapter);
-        tl_2();
+//        loadJsonFromAssests();
+
+
+
         return view;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getData();
+
+
+    }
+
+    private void getData() {
+        OkGo.<String>get(url)
+                .params("userId", "minApp125106")
+                .params("rooms", "厨房")
+                .execute(new com.lzy.okgo.callback.StringCallback() {
+                    @Override
+                    public void onSuccess(com.lzy.okgo.model.Response<String> response) {
+                        //AllBean mAllBean = JSONObject.parseObject(response.body(), AllBean.class);
+                        Log.e("TAG", "onSuccess:" + response.body());
+                        Message msg = new Message();
+                        msg.what = 401;
+                        msg.obj = response.body();
+                        mHandler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onError(com.lzy.okgo.model.Response<String> response) {
+                        super.onError(response);
+                        Log.e("TAG", "onError:" + response);
+                    }
+                });
+    }
+
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message message) {
+            if (message.what == 401) {
+                String post = (String) message.obj;
+                Gson gson = new Gson();
+                ClodAirBean mClodAirBean = gson.fromJson(post, ClodAirBean.class);
+                devices = new ArrayList<>();
+                if (!devices.isEmpty()) {
+                    devices.clear();
+                }
+                devices.addAll(mClodAirBean.getData().getModes());
+                for (int position = 0; position < devices.size(); position++) {
+                    mFragments.add(SimpleCardFragment.getInstance(devices.get(position)));
+                    mTabEntities.add(new TabEntity(devices.get(position).getEntity().getNick(),
+                            devices.get(position).getEntity().getIconed(devices.get(position).getEntity().getDeviceId()),
+                            devices.get(position).getEntity().getIconing(devices.get(position).getEntity().getDeviceId())
+                    ));
+                }
+
+                MyPagerAdapter mMyPagerAdapter = new MyPagerAdapter(getChildFragmentManager());
+                mViewPager.setAdapter(mMyPagerAdapter);
+                tl_2();
+
+            }
+            return false;
+        }
+    });
+
 
     public void loadJsonFromAssests() {
         String json = null;
@@ -79,6 +146,8 @@ public class HomeFragment extends Fragment {
         Gson gson = new Gson();
         ClodAirBean mClodAirBean = gson.fromJson(json, ClodAirBean.class);
         Log.e("TAG", "loadJsonFromAssests:" + mClodAirBean);
+
+
         devices = new ArrayList<>();
         if (!devices.isEmpty()) {
             devices.clear();
@@ -91,6 +160,10 @@ public class HomeFragment extends Fragment {
                     devices.get(position).getEntity().getIconing(devices.get(position).getEntity().getDeviceId())
             ));
         }
+
+
+
+
         /*
         这个问题已经解决了  接下来 做什么呢  顶部的数量 已经对应上了  接下来是处理   功能问题
         比如   动态按键 顺序  其他的有可能是跳着来  key 那么
@@ -116,6 +189,15 @@ public class HomeFragment extends Fragment {
         我存东西  是根据id存的    每一个id  对应每一个设备
         比如1是空调  对应空调的对象  比如空调id  空调名称  选中图片  未选中图片
         * */
+
+        /*
+         * 我想起来  我要做什么了
+         * 我应该在这个程序对接 网络 请求  比如遥控控制
+         * 接下来 把本地的json 替换为  在线的json
+         * 现在不行  他们在测试
+         * 我接下来  就是在这个程序里面 集成网络请求的东西
+         * */
+
         /*map2 = new HashMap<>();
         allGroups = new ArrayList<>();*/
         ///     map2.put(allGroups.get(position).getKeyIndex(), allGroups.get(position));
@@ -159,7 +241,6 @@ public class HomeFragment extends Fragment {
         Iterator<String> iter = map2.keySet().iterator();
         String ids = "1";
         String ids_2 = "2";
-
         // mClodAirBean.getData().getModes().get(0).getEntity().getDeviceId();
         System.out.println(ids);
         while (iter.hasNext()) {
@@ -183,12 +264,8 @@ public class HomeFragment extends Fragment {
         for (int i = 0; i < mTitles.length; i++) {
             ///      public TabEntity(String title, int selectedIcon, int unSelectedIcon) {
         }
-
         接下来  试试  如果存在两个json  应该怎么处理  这个0 不能写死  应该遍历成一个list
-
-
         比如我  我有两个\
-
         用1  2 3  4   5   做判啊   反正 最多判断6个
        */
     }

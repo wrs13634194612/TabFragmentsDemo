@@ -2,6 +2,7 @@ package com.example.demoanalytic;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.google.gson.Gson;
+import com.lzy.okgo.OkGo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,11 @@ public class SimpleCardFragment extends Fragment {
             btn_air12, btn_air13, btn_air14,
             btn_air15, btn_air16, btn_air17, btn_air18;
     private LinearLayout ll_air2, ll_air3, ll_air4, ll_air5, ll_air6;
-    private Button btn_countdown_status,btn_countdown_time;
-    private Button btn_time_end_status,btn_time_end,
-            btn_time_start_status,btn_time_start,btn_time_week;
+    private Button btn_countdown_status, btn_countdown_time;
+    private Button btn_time_end_status, btn_time_end,
+            btn_time_start_status, btn_time_start, btn_time_week;
+    private Button btn_set_time;
+    private String url = "http://tt.mindordz.com:6361/api/hac/rcControl";
 
     private List<ClodAirBean.DataBean.ModesBean.ListBean> keyboardList = new ArrayList<>();
     private ClodAirBean.DataBean.ModesBean.ListBean mListBean;
@@ -91,7 +97,8 @@ public class SimpleCardFragment extends Fragment {
         btn_time_end = view.findViewById(R.id.btn_time_end);
         btn_time_start_status = view.findViewById(R.id.btn_time_start_status);
         btn_time_start = view.findViewById(R.id.btn_time_start);
-        btn_time_week= view.findViewById(R.id.btn_time_week);
+        btn_time_week = view.findViewById(R.id.btn_time_week);
+        btn_set_time = view.findViewById(R.id.btn_set_time);
         return view;
     }
 
@@ -101,6 +108,32 @@ public class SimpleCardFragment extends Fragment {
     接下来要做的 是定时 的东西  先把页面展示给做了
 
     * */
+
+    private void getData(int rcId, int deviceId, String modeId, String modeHead, String keyName, int keyIndex) {
+        RcControlBean mRcControlBean = new RcControlBean();
+        mRcControlBean.setRcId(rcId);
+        mRcControlBean.setDeviceId(deviceId);
+        mRcControlBean.setModeId(modeId);
+        mRcControlBean.setModeHead(modeHead);
+        mRcControlBean.setKeyName(keyName);
+        mRcControlBean.setKeyIndex(keyIndex);
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(mRcControlBean);
+        OkGo.<String>post(url)
+                .upJson(jsonString)
+                .execute(new com.lzy.okgo.callback.StringCallback() {
+                    @Override
+                    public void onSuccess(com.lzy.okgo.model.Response<String> response) {
+                        Log.e("TAG", "onSuccess:" + response.body());
+                    }
+
+                    @Override
+                    public void onError(com.lzy.okgo.model.Response<String> response) {
+                        super.onError(response);
+                        Log.e("TAG", "onError:" + response);
+                    }
+                });
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -154,11 +187,11 @@ public class SimpleCardFragment extends Fragment {
 
         * */
 
-        if (mDelaysBean != null){
+        if (mDelaysBean != null) {
             btn_countdown_status.setText(String.valueOf(mDelaysBean.getSwitchStatus()));
             btn_countdown_time.setText(mDelaysBean.getExecuteTime());
         }
-        if (mTimingsBean != null){
+        if (mTimingsBean != null) {
             btn_time_end_status.setText(String.valueOf(mTimingsBean.getCloseIf()));
             btn_time_end.setText(mTimingsBean.getEndTime());
             btn_time_start_status.setText(String.valueOf(mTimingsBean.getOpenIf()));
@@ -213,6 +246,19 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 0data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                // 开     private void getData(int rcId,int deviceId,String modeId,String modeHead,String keyName,int keyIndex) {
+                //                getData();
+                // 我接下来 做什么呢  家人们  拿到我需要的值
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
+
+
             }
         });
 
@@ -225,6 +271,16 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 1data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                //关闭
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
+
             }
         });
 
@@ -237,6 +293,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click2 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -249,6 +313,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 3data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -261,6 +333,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 4data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -273,6 +353,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click5 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -285,6 +373,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click6 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -297,6 +393,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 7data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -309,6 +413,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click8 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
 
@@ -321,6 +433,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 9data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air10.setOnClickListener(new View.OnClickListener() {
@@ -332,6 +452,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 10data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air11.setOnClickListener(new View.OnClickListener() {
@@ -343,6 +471,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click11 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air12.setOnClickListener(new View.OnClickListener() {
@@ -354,6 +490,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 12data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air13.setOnClickListener(new View.OnClickListener() {
@@ -365,6 +509,15 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 13data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
+
             }
         });
         btn_air14.setOnClickListener(new View.OnClickListener() {
@@ -376,6 +529,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click14 data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air15.setOnClickListener(new View.OnClickListener() {
@@ -387,6 +548,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 15data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air16.setOnClickListener(new View.OnClickListener() {
@@ -398,6 +567,14 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 16data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+                int keyIndex = mListBean.getKeyIndex();
+                String keyName = mListBean.getKeyName();
+                String modeHead = mEntityBean.getModeHead();
+                String modeId = mEntityBean.getModeId();
+                String deviceId = mEntityBean.getDeviceId();
+                System.out.println(deviceId + modeId + modeHead + keyName + keyIndex);
+                int rcId = mEntityBean.getInfraredBinId();
+                getData(rcId, Integer.parseInt(deviceId), modeId, modeHead, keyName, keyIndex);
             }
         });
         btn_air17.setOnClickListener(new View.OnClickListener() {
@@ -420,6 +597,31 @@ public class SimpleCardFragment extends Fragment {
                     }
                 }
                 Log.e("TAG", "click 18data:" + mListBean.getKeyName() + "\t" + mListBean.getKeyIndex());
+            }
+        });
+
+        btn_set_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*
+                * 定时  需要 把entity传递过来
+                                 val intent = Intent(context, PlugUpdateNewActivity::class.java)
+                        intent.putExtra("equipmentId",it.equipmentId)
+                        intent.putExtra("productId",it.productId)
+                        context?.startActivity(intent)
+                        *
+                        *
+                    mScheduleBean.setBrandId("1");
+                    mScheduleBean.setModeId("6a56dfd96d1657882000851");
+                    mScheduleBean.setProductId("zcz004");
+                    mScheduleBean.setEquipmentId("zcz004100411");
+                * * */
+                Intent intent = new Intent(mContext,TimeActivity.class);
+                intent.putExtra("brandId",mEntityBean.getBrandId());
+                intent.putExtra("modeId",mEntityBean.getModeId());
+                intent.putExtra("productId",mEntityBean.getProductId());
+                intent.putExtra("equipmentId",mEntityBean.getEquipmentId());
+                startActivity(intent);
             }
         });
     }
