@@ -21,9 +21,10 @@ import java.util.ArrayList;
 
 public class ResultFragment extends Fragment {
     private Context mContext;
-    private Button btn_brand_connect, btn_res_all,btn_rc_delete;
+    private Button btn_brand_connect, btn_res_all,btn_rc_delete,btn_smart_connect;
     private String url = "http://tt.mindordz.com:6361/api/hac/findModeByUserId";
     private String urlDeleteRc = "http://tt.mindordz.com:6361/api/hac/deleteRc";
+    private String urlSmart = "http://tt.mindordz.com:6361/api/hac/learnCode";
 
 
     @Override
@@ -33,6 +34,7 @@ public class ResultFragment extends Fragment {
         btn_brand_connect = view.findViewById(R.id.btn_brand_connect);
         btn_res_all = view.findViewById(R.id.btn_res_all);
         btn_rc_delete = view.findViewById(R.id.btn_rc_delete);
+        btn_smart_connect = view.findViewById(R.id.btn_smart_connect);
         btn_brand_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,6 +54,13 @@ public class ResultFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getRcDelete();
+            }
+        });
+
+        btn_smart_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSmartData();
             }
         });
         return view;
@@ -93,6 +102,28 @@ public class ResultFragment extends Fragment {
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override
                     public void onSuccess(com.lzy.okgo.model.Response<String> response) {
+                        Log.e("TAG", "onSuccess:" + response.body());
+                    }
+
+                    @Override
+                    public void onError(com.lzy.okgo.model.Response<String> response) {
+                        super.onError(response);
+                        Log.e("TAG", "onError:" + response);
+                    }
+                });
+    }
+
+
+    private void getSmartData() {
+        OkGo.<String>get(urlSmart)
+                .params("deviceId", "5")
+                .params("code", "13,04DD,F00FF807F807FC")
+                .params("equipmentId", "zcz004100629")
+                .params("userId", "minApp125106")
+                .execute(new com.lzy.okgo.callback.StringCallback() {
+                    @Override
+                    public void onSuccess(com.lzy.okgo.model.Response<String> response) {
+                        //AllBean mAllBean = JSONObject.parseObject(response.body(), AllBean.class);
                         Log.e("TAG", "onSuccess:" + response.body());
                     }
 

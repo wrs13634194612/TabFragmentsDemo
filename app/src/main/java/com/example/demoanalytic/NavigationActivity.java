@@ -12,7 +12,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNav;
     private FragmentTransaction fragmentTransaction;
-    private HomeFragment homeFragment;
+    private RcFragment rcFragment;
     private ResultFragment resultFragment;
 
     @Override
@@ -24,8 +24,8 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void initFragments() {
-        homeFragment = new HomeFragment();
-        setFragment(homeFragment);
+        rcFragment = new RcFragment();
+        setFragment(rcFragment);
     }
 
     private void setFragment(Fragment fragment) {
@@ -44,8 +44,8 @@ public class NavigationActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.botnav_home:
-                    homeFragment = new HomeFragment();
-                    setFragment(homeFragment);
+                    rcFragment = new RcFragment();
+                    setFragment(rcFragment);
                     return true;
                 case R.id.botnav_result:
                     resultFragment = new ResultFragment();
