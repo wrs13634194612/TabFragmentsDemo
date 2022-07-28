@@ -36,6 +36,8 @@ public class SimpleCardFragment extends Fragment {
     private Button btn_time_end_status, btn_time_end,
             btn_time_start_status, btn_time_start, btn_time_week;
     private Button btn_set_time,btn_set_delay;
+    private Button btn_rc_edit; //编辑
+
     private String url = "http://tt.mindordz.com:6361/api/hac/rcControl";
 
     private List<ClodAirBean.DataBean.ModesBean.ListBean> keyboardList = new ArrayList<>();
@@ -55,6 +57,12 @@ public class SimpleCardFragment extends Fragment {
         sf.mDelaysBean = mModesBean.getDelays();
         sf.mEntityBean = mModesBean.getEntity();
         sf.mTimingsBean = mModesBean.getTimings();
+
+        /*
+        * 下午重点解决这个问题  居然框架  还存在bug 很烦
+        * 这个bug 暂时没法解决  必须使用eventbus才能处理
+        * */
+
         return sf;
     }
 
@@ -101,6 +109,8 @@ public class SimpleCardFragment extends Fragment {
         btn_time_week = view.findViewById(R.id.btn_time_week);
         btn_set_time = view.findViewById(R.id.btn_set_time);
         btn_set_delay = view.findViewById(R.id.btn_set_delay);
+        btn_rc_edit = view.findViewById(R.id.btn_rc_edit);
+
         return view;
     }
 
@@ -242,6 +252,19 @@ public class SimpleCardFragment extends Fragment {
             }
         });*/
 
+        btn_rc_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                要想编辑遥控  必须 拿到entity的数据
+                * */
+                Intent intent = new Intent(mContext, AddBrandRcActivity.class);
+                intent.putExtra("modeId", mEntityBean.getModeId());
+                intent.putExtra("infraredBinId", mEntityBean.getInfraredBinId());
+                intent.putExtra("userId", mEntityBean.getUserId());
+                startActivity(intent);
+            }
+        });
 
         btn_air0.setOnClickListener(new View.OnClickListener() {
             @Override

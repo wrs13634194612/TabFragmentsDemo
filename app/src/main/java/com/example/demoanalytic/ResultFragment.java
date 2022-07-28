@@ -96,7 +96,7 @@ public class ResultFragment extends Fragment {
 
     private void getRcDelete() {
         OkGo.<String>delete(urlDeleteRc)
-                .params("userId", "minApp125106")
+                .params("userId", "minApp108881")
                 .params("modeId", "6a56dfd96d1657882000851")
                 .params("id", 76)
                 .execute(new com.lzy.okgo.callback.StringCallback() {
@@ -119,7 +119,7 @@ public class ResultFragment extends Fragment {
                 .params("deviceId", "5")
                 .params("code", "13,04DD,F00FF807F807FC")
                 .params("equipmentId", "zcz004100629")
-                .params("userId", "minApp125106")
+                .params("userId", "minApp108881")
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override
                     public void onSuccess(com.lzy.okgo.model.Response<String> response) {

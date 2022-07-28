@@ -23,6 +23,7 @@
         <activity android:name=".DelayActivity"/>
         <activity android:name=".BrandConnectActivity"/>
         <activity android:name=".UpdateModeActivity"/>
+        <activity android:name=".AddBrandRcActivity"/>
 
     </application>
 

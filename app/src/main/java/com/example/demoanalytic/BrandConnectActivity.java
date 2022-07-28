@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 
@@ -21,7 +22,7 @@ public class BrandConnectActivity extends AppCompatActivity {
 
     private Button btn_save_brand;
     private EditText et_device_id, et_brand_id, et_user_id, et_equipment_id;
-    private String deviceIdString,brandIdString,userIdString,equipmentIdString;
+    private String deviceIdString, brandIdString, userIdString, equipmentIdString;
     private String url = "http://tt.mindordz.com:6361/api/hac/brandMatch";
 
 
@@ -59,19 +60,19 @@ public class BrandConnectActivity extends AppCompatActivity {
                 String post = (String) message.obj;
                 Gson gson = new Gson();
                 BrandConnectBean mBrandConnectBean = gson.fromJson(post, BrandConnectBean.class);
-                Intent intent = new Intent(BrandConnectActivity.this,UpdateModeActivity.class);
-                intent.putExtra("brandId",mBrandConnectBean.getData().getEntity().getBrandId());
-                intent.putExtra("productId",mBrandConnectBean.getData().getEntity().getProductId());
-                intent.putExtra("equipmentId",mBrandConnectBean.getData().getEntity().getEquipmentId());
-                intent.putExtra("modeId",mBrandConnectBean.getData().getEntity().getModeId());
-                intent.putExtra("nick",mBrandConnectBean.getData().getEntity().getNick());
-                intent.putExtra("rcRoom",mBrandConnectBean.getData().getEntity().getRcRoom());
-                intent.putExtra("infraredBinId",mBrandConnectBean.getData().getEntity().getInfraredBinId());
-                intent.putExtra("kfid",mBrandConnectBean.getData().getEntity().getKfid());
-                intent.putExtra("deviceId",mBrandConnectBean.getData().getEntity().getDeviceId());
-                intent.putExtra("modeHead",mBrandConnectBean.getData().getEntity().getModeHead());
-                intent.putExtra("rcOperateCode",mBrandConnectBean.getData().getEntity().getRcOperateCode());
-                intent.putExtra("userId",mBrandConnectBean.getData().getEntity().getUserId());
+                Intent intent = new Intent(BrandConnectActivity.this, UpdateModeActivity.class);
+                intent.putExtra("brandId", mBrandConnectBean.getData().getEntity().getBrandId());
+                intent.putExtra("productId", mBrandConnectBean.getData().getEntity().getProductId());
+                intent.putExtra("equipmentId", mBrandConnectBean.getData().getEntity().getEquipmentId());
+                intent.putExtra("modeId", mBrandConnectBean.getData().getEntity().getModeId());
+                intent.putExtra("nick", mBrandConnectBean.getData().getEntity().getNick());
+                intent.putExtra("rcRoom", mBrandConnectBean.getData().getEntity().getRcRoom());
+                intent.putExtra("infraredBinId", mBrandConnectBean.getData().getEntity().getInfraredBinId());
+                intent.putExtra("kfid", mBrandConnectBean.getData().getEntity().getKfid());
+                intent.putExtra("deviceId", mBrandConnectBean.getData().getEntity().getDeviceId());
+                intent.putExtra("modeHead", mBrandConnectBean.getData().getEntity().getModeHead());
+                intent.putExtra("rcOperateCode", mBrandConnectBean.getData().getEntity().getRcOperateCode());
+                intent.putExtra("userId", mBrandConnectBean.getData().getEntity().getUserId());
                 startActivity(intent);
             }
             return false;
@@ -82,7 +83,7 @@ public class BrandConnectActivity extends AppCompatActivity {
         OkGo.<String>get(url)
                 .params("deviceId", 5)
                 .params("brandId", 1119)
-                .params("userId", "minApp125106")
+                .params("userId", "minApp108881")
                 .params("equipmentId", "zcz004100411")
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override

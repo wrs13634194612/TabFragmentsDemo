@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,7 +33,7 @@ import java.util.List;
 
 
 public class RcFragment extends Fragment {
-    private ArrayList<Fragment> mFragments = new ArrayList<>();
+    private ArrayList<Fragment> mFragments;
 
 
     private String[] mTitles = {"空调", "风扇", "电视机", "机顶盒", "热水器", "灯泡", "IPTV"};
@@ -41,7 +42,7 @@ public class RcFragment extends Fragment {
     private int[] mIconSelectIds = {R.mipmap.rc_iptved, R.mipmap.rc_cold_aired, R.mipmap.rc_faned,
             R.mipmap.rc_tved, R.mipmap.rc_top_boxed, R.mipmap.rc_watered, R.mipmap.rc_lighted};
 
-    private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+    private ArrayList<CustomTabEntity> mTabEntities;
     private ViewPager mViewPager;
     private CommonTabLayout mTabLayout_2;
     private Context mContext;
@@ -49,7 +50,7 @@ public class RcFragment extends Fragment {
     private List<RcDeviceBean> allGroups;
     private List<ClodAirBean.DataBean.ModesBean> devices;
     private String url = "http://tt.mindordz.com:6361/api/hac/findModeByUserId";
-
+    private MyPagerAdapter mMyPagerAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -64,15 +65,39 @@ public class RcFragment extends Fragment {
         mTabLayout_2 = view.findViewById(R.id.tl_2);
         // loadJsonFromAssests();
         getData();
+        mTabEntities = new ArrayList<>();
+        mFragments = new ArrayList<>();
+        mMyPagerAdapter = new MyPagerAdapter(getChildFragmentManager());
+        mViewPager.setAdapter(mMyPagerAdapter);
 
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mTabLayout_2.setCurrentTab(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        mViewPager.setCurrentItem(0);
         return view;
     }
 
 
     private void getData() {
+        /*
+         * {"code":200,"data":{"rooms":"次卧,厨房,阳台,洗手间,工作间,中客厅,小客厅","modes":[]},"message":"操作成功"}
+         * */
         OkGo.<String>get(url)
                 .params("userId", "minApp125106")
-                .params("rooms", "客厅")
+                .params("rooms", "次卧,客厅,厨房,阳台,洗手间,工作间,中客厅,小客厅")
                 .execute(new com.lzy.okgo.callback.StringCallback() {
                     @Override
                     public void onSuccess(com.lzy.okgo.model.Response<String> response) {
@@ -112,9 +137,6 @@ public class RcFragment extends Fragment {
                             devices.get(position).getEntity().getIconing(devices.get(position).getEntity().getDeviceId())
                     ));
                 }
-
-                MyPagerAdapter mMyPagerAdapter = new MyPagerAdapter(getChildFragmentManager());
-                mViewPager.setAdapter(mMyPagerAdapter);
                 mTabLayout_2.setTabData(mTabEntities);
                 mTabLayout_2.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
@@ -126,30 +148,11 @@ public class RcFragment extends Fragment {
                     public void onTabReselect(int position) {
                     }
                 });
-
-                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-                        mTabLayout_2.setCurrentTab(position);
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-
-                    }
-                });
-                mViewPager.setCurrentItem(0);
+                mMyPagerAdapter.notifyDataSetChanged();
             }
             return false;
         }
     });
-
-
 
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
@@ -170,6 +173,11 @@ public class RcFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             return mFragments.get(position);
+        }
+
+        @Override
+        public int getItemPosition(@NonNull Object object) {
+            return PagerAdapter.POSITION_NONE;
         }
     }
 
