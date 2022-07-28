@@ -32,6 +32,8 @@ public class AddBrandRcActivity extends AppCompatActivity {
 
         btn_delete = findViewById(R.id.btn_delete);
 
+        btn_delete.setText(String.valueOf(infraredBinId));
+
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

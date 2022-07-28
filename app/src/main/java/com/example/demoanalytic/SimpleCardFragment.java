@@ -212,11 +212,14 @@ public class SimpleCardFragment extends Fragment {
             btn_time_end.setText(mTimingsBean.getEndTime());
             btn_time_start_status.setText(String.valueOf(mTimingsBean.getOpenIf()));
             btn_time_start.setText(mTimingsBean.getStartTime());
-            btn_time_week.setText(mTimingsBean.getWeek());
+         // 暂时注释   btn_time_week.setText(mTimingsBean.getWeek());
         }
         for (int position = 0; position < keyboardList.size(); position++) {
             isFunViewTwo(keyboardList.get(position).getKeyName());
         }
+
+          btn_time_week.setText(String.valueOf(mEntityBean.getInfraredBinId()));
+
 
        /* allGroups = new ArrayList<>();
         map2 = new HashMap<>();

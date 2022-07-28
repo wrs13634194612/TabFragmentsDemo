@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -31,10 +32,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+
 
 public class RcFragment extends Fragment {
     private ArrayList<Fragment> mFragments;
 
+
+    private SmartRefreshLayout sm_fragment_mine;
 
     private String[] mTitles = {"空调", "风扇", "电视机", "机顶盒", "热水器", "灯泡", "IPTV"};
     private int[] mIconUnselectIds = {R.mipmap.rc_iptving, R.mipmap.rc_cold_airing, R.mipmap.rc_faning,
@@ -63,6 +70,8 @@ public class RcFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment1, null);
         mViewPager = view.findViewById(R.id.vp_2);
         mTabLayout_2 = view.findViewById(R.id.tl_2);
+
+        sm_fragment_mine = view.findViewById(R.id.sm_fragment_mine);
         // loadJsonFromAssests();
         getData();
         mTabEntities = new ArrayList<>();
@@ -87,6 +96,31 @@ public class RcFragment extends Fragment {
             }
         });
         mViewPager.setCurrentItem(0);
+
+        /*
+        *
+        sm_fragment_mine.setEnableLoadMore(false)
+        sm_fragment_mine.setOnRefreshListener {
+            Log.e("TAG", "getNum_onSuccess:$,$roomList,$dataList")
+            if (dataList.isNotEmpty()) {
+                val deviceString = listToString5(dataList, ',')
+                getOnlineCount(deviceString)
+            } else {
+                getOnlineCount(rooms)
+            }
+        }
+        * */
+
+
+        sm_fragment_mine.setEnableLoadMore(false);
+
+        sm_fragment_mine.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                getData();
+            }
+        });
+
         return view;
     }
 
@@ -129,6 +163,12 @@ public class RcFragment extends Fragment {
                 if (!devices.isEmpty()) {
                     devices.clear();
                 }
+                if (!mFragments.isEmpty()) {
+                    mFragments.clear();
+                }
+                if (!mTabEntities.isEmpty()) {
+                    mTabEntities.clear();
+                }
                 devices.addAll(mClodAirBean.getData().getModes());
                 for (int position = 0; position < devices.size(); position++) {
                     mFragments.add(SimpleCardFragment.getInstance(devices.get(position)));
@@ -149,13 +189,19 @@ public class RcFragment extends Fragment {
                     }
                 });
                 mMyPagerAdapter.notifyDataSetChanged();
+                /*
+                * 还是不行哦  删除 刷新后  数据还是乱的  说白了  就是界面存在缓存  怎么清除缓存
+                * */
+
+                sm_fragment_mine.finishLoadMore();
+                sm_fragment_mine.finishRefresh();
             }
             return false;
         }
     });
 
 
-    private class MyPagerAdapter extends FragmentPagerAdapter {
+    private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
