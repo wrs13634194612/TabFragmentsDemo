@@ -88,6 +88,8 @@ public class RcFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 mTabLayout_2.setCurrentTab(position);
+                Log.e("TAG","current room:"+devices.get(position).getEntity().getRcRoom());
+
             }
 
             @Override
@@ -96,7 +98,6 @@ public class RcFragment extends Fragment {
             }
         });
         mViewPager.setCurrentItem(0);
-
         /*
         *
         sm_fragment_mine.setEnableLoadMore(false)
@@ -110,17 +111,13 @@ public class RcFragment extends Fragment {
             }
         }
         * */
-
-
         sm_fragment_mine.setEnableLoadMore(false);
-
         sm_fragment_mine.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 getData();
             }
         });
-
         return view;
     }
 
@@ -190,9 +187,8 @@ public class RcFragment extends Fragment {
                 });
                 mMyPagerAdapter.notifyDataSetChanged();
                 /*
-                * 还是不行哦  删除 刷新后  数据还是乱的  说白了  就是界面存在缓存  怎么清除缓存
-                * */
-
+                 * 还是不行哦  删除 刷新后  数据还是乱的  说白了  就是界面存在缓存  怎么清除缓存
+                 * */
                 sm_fragment_mine.finishLoadMore();
                 sm_fragment_mine.finishRefresh();
             }

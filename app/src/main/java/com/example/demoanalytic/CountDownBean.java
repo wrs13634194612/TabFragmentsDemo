@@ -17,6 +17,15 @@ public class CountDownBean {
     private String equipmentId;
     private String executeTime;
     private int switchStatus;
+    private int remoteControlId;
+
+    public int getRemoteControlId() {
+        return remoteControlId;
+    }
+
+    public void setRemoteControlId(int remoteControlId) {
+        this.remoteControlId = remoteControlId;
+    }
 
     public String getBrandId() {
         return brandId;

@@ -14,7 +14,7 @@ import com.lzy.okgo.OkGo;
 
 public class DelayActivity extends AppCompatActivity {
 
-    private Button btn_delete_delay, btn_save_delay;
+    private Button btn_delete_delay, btn_save_delay,btn_delay_id;
     private EditText et_time_delay, et_delay_isRun;
     private String timeDelayString, delayIsRunString;
     private String url = "http://tt.mindordz.com:6361/api/time/createAndUpdateRcDelay";
@@ -23,6 +23,8 @@ public class DelayActivity extends AppCompatActivity {
     private String modeId;
     private String productId;
     private String equipmentId;
+    private int infraredBinId;
+
     private int delayId;
 
 
@@ -35,6 +37,7 @@ public class DelayActivity extends AppCompatActivity {
         btn_save_delay = findViewById(R.id.btn_save_delay);
         et_time_delay = findViewById(R.id.et_time_delay);
         et_delay_isRun = findViewById(R.id.et_delay_isRun);
+        btn_delay_id = findViewById(R.id.btn_delay_id);
         /*
                    intent.putExtra("brandId",mEntityBean.getBrandId());
                 intent.putExtra("modeId",mEntityBean.getModeId());
@@ -47,8 +50,12 @@ public class DelayActivity extends AppCompatActivity {
         productId = getIntent().getStringExtra("productId");
         equipmentId = getIntent().getStringExtra("equipmentId");
         delayId = getIntent().getIntExtra("delayId", 0);
+        infraredBinId= getIntent().getIntExtra("infraredBinId", 0);
 
         System.out.println(brandId + modeId + productId + equipmentId);
+
+
+        btn_delay_id.setText(String.valueOf(delayId));
 
         //1119 6a56dfd96d1657882000851 zcz004 zcz004100411
 
@@ -95,6 +102,7 @@ public class DelayActivity extends AppCompatActivity {
         mCountDownBean.setProductId(productId);
         mCountDownBean.setEquipmentId(equipmentId);
         mCountDownBean.setExecuteTime(timeDelayString);
+        mCountDownBean.setRemoteControlId(infraredBinId);
         mCountDownBean.setSwitchStatus(delayIsRunInteger);
         Gson gson = new Gson();
         String jsonString = gson.toJson(mCountDownBean);
