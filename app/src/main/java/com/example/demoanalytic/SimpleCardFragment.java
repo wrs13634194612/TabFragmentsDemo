@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import java.util.Iterator;
 
+import com.example.timerdems.CountDownTimerSupport;
+import com.example.timerdems.OnCountDownTimerListener;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 
@@ -58,6 +60,7 @@ public class SimpleCardFragment extends Fragment {
     private ClodAirBean.DataBean.ModesBean.TimingsBean mTimingsBean;
     private boolean deviceStatus = false; //false 关闭  true打开  默认关闭
     private HashMap<String, HomeRcBean> homeMap;
+    private CountDownTimerSupport mTimer;
 
 
     public static SimpleCardFragment getInstance(ClodAirBean.DataBean.ModesBean mModesBean) {
@@ -866,7 +869,7 @@ public class SimpleCardFragment extends Fragment {
                     mScheduleBean.setProductId("zcz004");
                     mScheduleBean.setEquipmentId("zcz004100411");
                 * * */
-                if (mDelaysBean != null) {
+             /**   if (mDelaysBean != null) {
                     delayId = mDelaysBean.getId();
                 }
                 Intent intent = new Intent(mContext, DelayActivity.class);
@@ -876,12 +879,70 @@ public class SimpleCardFragment extends Fragment {
                 intent.putExtra("equipmentId", mEntityBean.getEquipmentId());
                 intent.putExtra("infraredBinId", mEntityBean.getInfraredBinId());
                 intent.putExtra("delayId", delayId);
-                startActivity(intent);
+                startActivity(intent);*/
+
+             /*点击按钮 出现弹窗  不需要华丽花哨   直接出倒计时 */
+
+                clickStart();
             }
         });
 
 
     }
+
+
+/*    @Override
+    public void onResume() {
+        super.onResume();
+        if (mTimer != null) {
+            mTimer.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mTimer != null) {
+            mTimer.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mTimer != null) {
+            mTimer.stop();
+        }
+    }*/
+
+    public void clickStart() {
+        if (mTimer != null) {
+            mTimer.stop();
+            mTimer = null;
+        }
+        long millisInFuture = Long.parseLong("60000");
+        long countDownInterval = Long.parseLong("1000");
+        mTimer = new CountDownTimerSupport(millisInFuture, countDownInterval);
+        mTimer.setOnCountDownTimerListener(new OnCountDownTimerListener() {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e("TAG", "测试数据倒计时 : "+millisUntilFinished + "ms\n" + millisUntilFinished / 1000 + "s");
+            }
+
+            @Override
+            public void onFinish() {
+                Log.e("TAG", "倒计时已结束");
+            }
+
+            @Override
+            public void onCancel() {
+                Log.e("TAG", "倒计时已手动停止");
+
+            }
+        });
+        mTimer.start();
+    }
+
 
     /*
      *  String fanDirection = mAir[7]; //00 自动 01 上下摆风  02 左右摆风 03 前后摆风 04 摆风
@@ -1032,4 +1093,9 @@ public class SimpleCardFragment extends Fragment {
         }
     }
 
+
+    /*
+    * 这种倒计时  存在问题？ 不存在   就在后台跑着吧
+    * 接下来 就是处理 倒计时区分的问题
+    * */
 }

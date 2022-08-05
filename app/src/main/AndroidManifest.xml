@@ -25,6 +25,8 @@
         <activity android:name=".BrandConnectActivity"/>
         <activity android:name=".UpdateModeActivity"/>
         <activity android:name=".AddBrandRcActivity"/>
+        <activity android:name="com.example.timerdems.RecyclerViewActivity"/>
+        <activity android:name="com.example.timerdems.MainActivity"/>
 
     </application>
 
